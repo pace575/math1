@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>算术挑战营 | 每关30题 · 难度渐进填空</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            background: linear-gradient(145deg, #2c7a5e 0%, #145a44 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', 'Poppins', 'Fredoka One', 'Comic Neue', system-ui, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .game-container {
+            max-width: 750px;
+            width: 100%;
+            background: #fffbf0;
+            border-radius: 70px 70px 60px 60px;
+            box-shadow: 0 25px 40px rgba(0, 0, 0, 0.3), inset 0 1px 4px rgba(255, 250, 210, 0.9);
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+
+        .game-header {
+            background: #ffda9e;
+            padding: 18px 25px;
+            border-bottom: 5px solid #f3a257;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .level-badge {
+            background: #2f4b3c;
+            color: #ffefb9;
+            font-weight: bold;
+            font-size: 1.4rem;
+            padding: 6px 22px;
+            border-radius: 50px;
+            box-shadow: inset 0 -2px 0 #1d2f25, 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .progress-card {
+            background: #ffffffdb;
+            padding: 5px 18px;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #c25d2e;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05), 0 3px 8px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 15px;
+        }
+
+        .progress-card span {
+            font-weight: 800;
+            color: #e67e22;
+            font-size: 1.4rem;
+            margin-left: 5px;
+        }
+
+        .question-card {
+            background: #fffaf0;
+            margin: 25px 30px 20px 30px;
+            border-radius: 60px;
+            padding: 25px 15px 20px;
+            box-shadow: 0 12px 18px rgba(0, 0, 0, 0.1), inset 0 1px 2px white;
+            text-align: center;
+        }
+
+        .equation {
+            font-size: 2.8rem;
+            font-weight: 700;
+            font-family: 'Courier New', 'Fira Mono', monospace;
+            background: #fff3e0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 12px 28px;
+            border-radius: 60px;
+            box-shadow: inset 0 1px 4px #cfbc9a, 0 6px 0 #cdb185;
+            background: #fef4e4;
+        }
+
+        .equation span, .equation input {
+            font-size: 2.4rem;
+            font-weight: 700;
+        }
+
+        .blank-input {
+            width: 100px;
+            text-align: center;
+            background: white;
+            border: 3px solid #f3b15a;
+            border-radius: 60px;
+            padding: 5px 10px;
+            font-family: monospace;
+            font-weight: bold;
+            font-size: 2rem;
+            color: #2c3e2f;
+            outline: none;
+            transition: 0.1s;
+            box-shadow: inset 0 1px 4px rgba(0,0,0,0.05);
+        }
+
+        .blank-input:focus {
+            border-color: #e67e22;
+            background: #fff6e8;
+            box-shadow: 0 0 0 3px rgba(230,126,34,0.2);
+        }
+
+        .feedback {
+            margin-top: 18px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            min-height: 65px;
+            color: #2c5f2d;
+            background: #efe3cd;
+            display: inline-block;
+            width: auto;
+            padding: 8px 24px;
+            border-radius: 40px;
+            box-shadow: inset 0 0 0 1px #fff1df, 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin: 10px 30px 30px 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border: none;
+            font-size: 1.25rem;
+            font-weight: bold;
+            padding: 12px 28px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.08s linear;
+            background: #f0cf9c;
+            color: #5e3a1c;
+            box-shadow: 0 5px 0 #b97f3a;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: #ffb347;
+            color: #2e241f;
+            box-shadow: 0 5px 0 #c16f1a;
+        }
+
+        .btn-primary:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #c16f1a;
+        }
+
+        .btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #b97f3a;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            transform: none;
+            cursor: not-allowed;
+            box-shadow: 0 5px 0 #b97f3a;
+        }
+
+        .next-btn {
+            background: #5fa7f0;
+            color: white;
+            box-shadow: 0 5px 0 #2c5298;
+        }
+
+        .difficulty-tag {
+            background: #e6d2aa;
+            margin: 0 30px 20px 30px;
+            padding: 8px;
+            border-radius: 36px;
+            font-size: 0.85rem;
+            text-align: center;
+            font-weight: 600;
+            color: #4b2f14;
+        }
+
+        footer {
+            background: #f9e8cf;
+            text-align: center;
+            padding: 12px;
+            font-size: 0.8rem;
+            color: #b47c44;
+        }
+
+        .streak {
+            background: #fdebb3;
+            border-radius: 30px;
+            padding: 0px 12px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        @media (max-width: 550px) {
+            .equation { font-size: 1.8rem; gap: 6px; padding: 8px 12px; }
+            .equation span, .equation input { font-size: 1.8rem; }
+            .blank-input { width: 70px; font-size: 1.6rem; }
+            .btn { padding: 8px 16px; font-size: 1rem; }
+            .level-badge { font-size: 1.1rem; }
+            .progress-card { font-size: 0.9rem; gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+<div class="game-container">
+    <div class="game-header">
+        <div class="level-badge">🏆 第 <span id="levelNum">1</span> 大关</div>
+        <div class="progress-card">
+            <div>📋 本关进度</div>
+            <div><span id="qCurrentIdx">0</span> / <span id="qTotal">30</span></div>
+        </div>
+    </div>
+    <div class="question-card">
+        <div class="equation" id="equationArea">
+            <!-- 算式填空动态展示 -->
+        </div>
+        <div class="feedback" id="feedbackMsg">✨ 每大关包含30道小题 · 全部答对即可晋级下一大关 ✨</div>
+    </div>
+    <div class="action-buttons">
+        <button class="btn btn-primary" id="submitBtn">📝 提交本题</button>
+        <button class="btn next-btn" id="nextBtn" disabled>➡️ 下一题</button>
+    </div>
+    <div class="difficulty-tag" id="difficultyHint">
+        🧸 第1大关 · 温和起步 · 数字0~30 填空友好
+    </div>
+    <footer>
+        💡 每关30题，正确完成当前所有题目才能进入下一关！填空可能是结果或算式中的数字，难度逐渐爬坡。
+    </footer>
+</div>
+
+<script>
+    // ======================= 每大关30道题 · 100以内计算闯关 =======================
+    // 核心机制:
+    // - 每个“大关”包含30道小题 (题目索引 0~29)
+    // - 玩家依次回答每一道小题，必须全部答对才能通关到下一大关
+    // - 每大关的题目难度、数字范围随关卡等级递增 (level 1,2,3,...)
+    // - 支持填空类型多样化: 结果填空，或者第一个操作数填空，第二个操作数填空 (逆运算)
+    // - 每题一提交，正确后解锁“下一题”按钮，直到30题全部完成，然后自动晋级下一大关并重置题号。
+    // - 游戏界面显示当前大关、本关内第几题/总题数、累计大关通关次数（相当于闯关成功的大关数）
+    // - 难度平滑上升，刚开始非常温和，后期接近100以内但依然保持良好可玩性。
+    
+    // 全局状态
+    let currentBigLevel = 1;          // 当前第几大关
+    let currentSubIndex = 0;          // 当前大关内已完成多少题(已正确数量) 同时也表示下一道题的索引 (0~29)
+    let totalPerLevel = 30;            // 每大关固定30题
+    let levelQuestionsList = [];        // 存储当前大关所有题目对象 (预先生成，确保挑战稳定)
+    let currentQuestionObj = null;     // 当前正在作答的题目
+    let canSubmit = true;              // 当前题目尚未正确，需要提交验证
+    let waitingForNext = false;        // 辅助标志: 本题正确后等待下一题
+    
+    // 累计通关大关数（即已经完整通关的大关数目，每次全通一个大关+1）
+    let passedLevelsCount = 0;          // 这也作为分数荣誉显示
+    
+    // DOM 元素
+    const levelNumSpan = document.getElementById('levelNum');
+    const qCurrentIdxSpan = document.getElementById('qCurrentIdx');
+    const qTotalSpan = document.getElementById('qTotal');
+    const equationArea = document.getElementById('equationArea');
+    const feedbackMsgDiv = document.getElementById('feedbackMsg');
+    const submitBtn = document.getElementById('submitBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const difficultyHintSpan = document.getElementById('difficultyHint');
+    
+    // 辅助: 更新进度显示
+    function updateProgressUI() {
+        qCurrentIdxSpan.innerText = currentSubIndex;
+        qTotalSpan.innerText = totalPerLevel;
+    }
+    
+    // 根据大关等级和该大关内第几题 (索引) 生成合适的题目 (难度在大关内平滑微增)
+    // 参数: bigLevel 大关编号 (1,2,3...), subIdx (0~29)
+    // 难度策略: 随着大关等级增加，整体数字范围扩大，同时也随着 subIdx 增加在同大关内略微提高上限，让30题循序渐进
+    function generateQuestion(bigLevel, subIdx) {
+        // 基础难度系数: bigLevel 越大难度越高，并且 subIdx 增加也会略微提高难度
+        let difficultyFactor = (bigLevel - 1) * 1.2 + (subIdx / 30) * 0.8;
+        // 限制最大系数 4.0 封顶，保证不超出100以内且简单友好
+        let range = Math.min(30 + Math.floor(difficultyFactor * 18), 96);
+        if (bigLevel === 1) range = Math.min(range, 32);
+        if (bigLevel === 2) range = Math.min(range, 50);
+        let minVal = 1;
+        let maxVal = Math.max(12, range);
+        
+        // 加减倾向: 难度低时多用加法（友好），后期加减平衡
+        let useAdd = true;
+        if (bigLevel <= 2) {
+            useAdd = Math.random() < 0.75;
+        } else if (bigLevel <= 4) {
+            useAdd = Math.random() < 0.65;
+        } else {
+            useAdd = Math.random() < 0.55;
+        }
+        
+        let operand1, operand2, result, opSymbol;
+        let safe = 0;
+        // 确保最终结果在 0~100 之间，数字在合理范围，减法非负
+        do {
+            if (useAdd) {
+                opSymbol = '+';
+                operand1 = Math.floor(Math.random() * (maxVal - minVal + 1) + minVal);
+                let limitSecond = Math.min(maxVal, 100 - operand1);
+                if (limitSecond < minVal) limitSecond = minVal;
+                operand2 = Math.floor(Math.random() * (limitSecond - minVal + 1) + minVal);
+                result = operand1 + operand2;
+                if (result <= 100 && result >= 0 && operand1 <= 100 && operand2 <= 100) break;
+            } else {
+                opSymbol = '-';
+                operand1 = Math.floor(Math.random() * (maxVal - minVal + 1) + minVal);
+                let maxSub = Math.min(operand1, maxVal);
+                if (maxSub < minVal) maxSub = operand1;
+                operand2 = Math.floor(Math.random() * (maxSub - minVal + 1) + minVal);
+                result = operand1 - operand2;
+                if (result >= 0 && result <= 100 && operand1 <= 100 && operand2 <= 100) break;
+            }
+            safe++;
+            if (safe > 25) {
+                operand1 = 20;
+                operand2 = 12;
+                opSymbol = '+';
+                result = 32;
+                break;
+            }
+        } while (true);
+        
+        // 填空题类型策略: 整体保持大多数为结果填空，但根据大关等级适当增加操作数填空的占比，提升思维。
+        // 大关1~2: 85% 结果填空；大关3~4: 75% 结果填空；大关5+: 65% 结果填空
+        let blankType = 'result';
+        if (bigLevel <= 2) {
+            let r = Math.random();
+            if (r < 0.85) blankType = 'result';
+            else if (r < 0.93) blankType = 'operand1';
+            else blankType = 'operand2';
+        } else if (bigLevel <= 4) {
+            let r = Math.random();
+            if (r < 0.75) blankType = 'result';
+            else if (r < 0.88) blankType = 'operand1';
+            else blankType = 'operand2';
+        } else {
+            let r = Math.random();
+            if (r < 0.65) blankType = 'result';
+            else if (r < 0.82) blankType = 'operand1';
+            else blankType = 'operand2';
+        }
+        
+        let text = '';
+        let answerValue = 0;
+        if (blankType === 'result') {
+            text = `${operand1} ${opSymbol} ${operand2} = □`;
+            answerValue = result;
+        } else if (blankType === 'operand1') {
+            text = `□ ${opSymbol} ${operand2} = ${result}`;
+            answerValue = operand1;
+        } else {
+            if (opSymbol === '+') {
+                text = `${operand1} + □ = ${result}`;
+                answerValue = operand2;
+            } else {
+                text = `${operand1} - □ = ${result}`;
+                answerValue = operand2;
+            }
+        }
+        
+        const fullExpr = `${operand1} ${opSymbol} ${operand2} = ${result}`;
+        return {
+            text: text,
+            answer: answerValue,
+            blankType: blankType,
+            fullExpression: fullExpr,
+            operand1, operand2, operator: opSymbol
+        };
+    }
+    
+    // 预先生成当前大关所有30道题目 (使流程更稳定，不会因刷新题目而变化)
+    function generateLevelQuestions(bigLevel) {
+        const questions = [];
+        for (let i = 0; i < totalPerLevel; i++) {
+            // 同大关内，随着i增加略微提高数字难度上限，保证30题中有平缓爬坡感
+            // 但直接调用generateQuestion并传递当前大关和子索引，生成时内部难度系数已经依赖subIdx
+            // 为了让同一大关内越往后越稍微有进步，我们传递 subIdx = i
+            // 轻微调整: 增大maxVal上限
+            let tempLevel = bigLevel;
+            let tempSub = i;
+            // 为了保证生成逻辑一致，重新写一个内嵌生成但不改变原函数，直接用原函数基础
+            // generateQuestion 本质支持用subIdx微调
+            const q = (function(bL, idx) {
+                let factor = (bL - 1) * 1.1 + (idx / 30) * 0.9;
+                let rangeVal = Math.min(28 + Math.floor(factor * 18), 95);
+                if (bL === 1) rangeVal = Math.min(rangeVal, 32);
+                if (bL === 2) rangeVal = Math.min(rangeVal, 52);
+                let minV = 1;
+                let maxV = Math.max(12, rangeVal);
+                let useAdd = true;
+                if (bL <= 2) useAdd = Math.random() < 0.75;
+                else if (bL <= 4) useAdd = Math.random() < 0.65;
+                else useAdd = Math.random() < 0.55;
+                let o1, o2, res, opSym;
+                let cnt = 0;
+                do {
+                    if (useAdd) {
+                        opSym = '+';
+                        o1 = Math.floor(Math.random() * (maxV - minV + 1) + minV);
+                        let limitSec = Math.min(maxV, 100 - o1);
+                        if (limitSec < minV) limitSec = minV;
+                        o2 = Math.floor(Math.random() * (limitSec - minV + 1) + minV);
+                        res = o1 + o2;
+                        if (res <= 100 && res >= 0 && o1 <= 100 && o2 <= 100) break;
+                    } else {
+                        opSym = '-';
+                        o1 = Math.floor(Math.random() * (maxV - minV + 1) + minV);
+                        let maxSub = Math.min(o1, maxV);
+                        if (maxSub < minV) maxSub = o1;
+                        o2 = Math.floor(Math.random() * (maxSub - minV + 1) + minV);
+                        res = o1 - o2;
+                        if (res >= 0 && res <= 100 && o1 <= 100 && o2 <= 100) break;
+                    }
+                    cnt++;
+                    if (cnt > 20) {
+                        o1 = 20 + (idx % 15);
+                        o2 = 11;
+                        opSym = '+';
+                        res = o1 + o2;
+                        break;
+                    }
+                } while(true);
+                
+                let blankChoice = 'result';
+                if (bL <= 2) {
+                    let r2 = Math.random();
+                    if (r2 < 0.85) blankChoice = 'result';
+                    else if (r2 < 0.93) blankChoice = 'operand1';
+                    else blankChoice = 'operand2';
+                } else if (bL <= 4) {
+                    let r2 = Math.random();
+                    if (r2 < 0.75) blankChoice = 'result';
+                    else if (r2 < 0.88) blankChoice = 'operand1';
+                    else blankChoice = 'operand2';
+                } else {
+                    let r2 = Math.random();
+                    if (r2 < 0.65) blankChoice = 'result';
+                    else if (r2 < 0.82) blankChoice = 'operand1';
+                    else blankChoice = 'operand2';
+                }
+                let txt = '';
+                let ansVal = 0;
+                if (blankChoice === 'result') {
+                    txt = `${o1} ${opSym} ${o2} = □`;
+                    ansVal = res;
+                } else if (blankChoice === 'operand1') {
+                    txt = `□ ${opSym} ${o2} = ${res}`;
+                    ansVal = o1;
+                } else {
+                    if (opSym === '+') {
+                        txt = `${o1} + □ = ${res}`;
+                        ansVal = o2;
+                    } else {
+                        txt = `${o1} - □ = ${res}`;
+                        ansVal = o2;
+                    }
+                }
+                return {
+                    text: txt,
+                    answer: ansVal,
+                    blankType: blankChoice,
+                    fullExpression: `${o1} ${opSym} ${o2} = ${res}`,
+                };
+            })(bigLevel, i);
+            questions.push(q);
+        }
+        return questions;
+    }
+    
+    // 重置当前大关（重新加载题目，一般晋级时调用或者初始化）
+    function loadLevel(bigLevel) {
+        levelQuestionsList = generateLevelQuestions(bigLevel);
+        currentSubIndex = 0;
+        updateProgressUI();
+        // 重置状态
+        canSubmit = true;
+        waitingForNext = false;
+        submitBtn.disabled = false;
+        nextBtn.disabled = true;
+        // 加载第一道题
+        loadCurrentQuestion();
+        updateDifficultyHintByLevel(bigLevel);
+        feedbackMsgDiv.innerHTML = `🎯 第 ${bigLevel} 大关 · 共30题 · 全部正确即可晋级！加油！`;
+    }
+    
+    function loadCurrentQuestion() {
+        if (currentSubIndex >= totalPerLevel) {
+            // 理论上已经全部完成，触发晋级
+            completeBigLevel();
+            return;
+        }
+        currentQuestionObj = levelQuestionsList[currentSubIndex];
+        renderQuestionToDOM(currentQuestionObj);
+        canSubmit = true;
+        waitingForNext = false;
+        submitBtn.disabled = false;
+        nextBtn.disabled = true;
+    }
+    
+    function renderQuestionToDOM(question) {
+        let raw = question.text;
+        let html = raw.replace('□', '<input type="number" id="answerBlank" class="blank-input" placeholder="?" inputmode="numeric" autocomplete="off">');
+        html = html.replace('=', ' = ');
+        equationArea.innerHTML = html;
+        const inputElem = document.getElementById('answerBlank');
+        if (inputElem) {
+            inputElem.value = '';
+            inputElem.focus();
+            inputElem.onkeypress = (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (canSubmit && !waitingForNext) {
+                        handleSubmitAnswer();
+                    } else if (!canSubmit && !waitingForNext) {
+                        feedbackMsgDiv.innerHTML = "✅ 本题已完成！请点击『下一题』继续 ✅";
+                    }
+                }
+            };
+        }
+    }
+    
+    // 提交答案逻辑
+    function handleSubmitAnswer() {
+        if (!canSubmit) {
+            feedbackMsgDiv.innerHTML = "⌛ 本题已经正确回答过了，进入下一题吧！";
+            return;
+        }
+        if (waitingForNext) return;
+        const inputField = document.getElementById('answerBlank');
+        if (!inputField) {
+            renderQuestionToDOM(currentQuestionObj);
+            feedbackMsgDiv.innerHTML = "🔄 重新输入答案";
+            return;
+        }
+        const userValue = parseInt(inputField.value.trim(), 10);
+        if (isNaN(userValue)) {
+            feedbackMsgDiv.innerHTML = "🔢 在框中填写数字答案！";
+            return;
+        }
+        if (userValue === currentQuestionObj.answer) {
+            // 回答正确
+            canSubmit = false;
+            // 标记本题已经完成，解锁下一题按钮
+            feedbackMsgDiv.innerHTML = `✔️ 正确！ ${currentQuestionObj.fullExpression}  ✔️ 本题通过！点击“下一题”继续`;
+            submitBtn.disabled = true;
+            nextBtn.disabled = false;
+            waitingForNext = true;
+        } else {
+            feedbackMsgDiv.innerHTML = `❌ 错误！ ${currentQuestionObj.fullExpression}  你填了 ${userValue}，再试试看~ ❌`;
+            const inp = document.getElementById('answerBlank');
+            if (inp) {
+                inp.style.borderColor = "#e67e22";
+                setTimeout(() => { if(inp) inp.style.borderColor = "#f3b15a"; }, 500);
+                inp.value = '';
+                inp.focus();
+            }
+        }
+    }
+    
+    // 处理下一题（移动到下一道小题）
+    function moveToNextQuestion() {
+        if (!waitingForNext && canSubmit === false) {
+            // 特殊情况已经正确但没有按规则？
+        }
+        if (!waitingForNext && canSubmit) {
+            feedbackMsgDiv.innerHTML = "⚠️ 请先正确回答当前题目，才能继续下一题！⚠️";
+            return;
+        }
+        // 增加索引
+        currentSubIndex++;
+        updateProgressUI();
+        
+        if (currentSubIndex >= totalPerLevel) {
+            // 30题全部完成，晋级大关！
+            completeBigLevel();
+            return;
+        }
+        // 加载下一道题
+        currentQuestionObj = levelQuestionsList[currentSubIndex];
+        renderQuestionToDOM(currentQuestionObj);
+        canSubmit = true;
+        waitingForNext = false;
+        submitBtn.disabled = false;
+        nextBtn.disabled = true;
+        feedbackMsgDiv.innerHTML = `📖 第 ${currentSubIndex + 1} / ${totalPerLevel} 题，继续挑战！`;
+    }
+    
+    // 完成一大关30题，晋级
+    function completeBigLevel() {
+        // 累计通关大关数增加
+        passedLevelsCount++;
+        // 晋级当前大关+1
+        currentBigLevel++;
+        // 刷新显示大关数
+        levelNumSpan.innerText = currentBigLevel;
+        // 提示成功晋级消息
+        feedbackMsgDiv.innerHTML = `🎉🎉🎉 恭喜通关第 ${currentBigLevel-1} 大关（30题全对）！晋级第 ${currentBigLevel} 大关 🎉🎉🎉`;
+        // 重新生成新的大关所有题目
+        loadLevel(currentBigLevel);
+        // 更新难度提示
+        updateDifficultyHintByLevel(currentBigLevel);
+        // 额外更新分数显示（累计通关大关数），无实际分数面板但可补一个荣耀显示，可以放在header增加，但简单加在反馈中
+    }
+    
+    function updateDifficultyHintByLevel(level) {
+        if (level === 1) {
+            difficultyHintSpan.innerHTML = "🧸 第1大关 · 非常友好 · 数字0~32 · 多数结果填空";
+        } else if (level === 2) {
+            difficultyHintSpan.innerHTML = "🌸 第2大关 · 温和进阶 · 数字可达50 · 填空题多样化少许";
+        } else if (level === 3) {
+            difficultyHintSpan.innerHTML = "🌟 第3大关 · 稳步提升 · 两位数加减 · 填空包含逆运算";
+        } else if (level === 4) {
+            difficultyHintSpan.innerHTML = "⚡ 第4大关 · 难度适中 · 接近100以内 · 需要细心计算";
+        } else {
+            difficultyHintSpan.innerHTML = `🏆 第${level}大关 · 挑战模式 · 100以内灵活填空 · 每关30题 · 展现真正实力🏆`;
+        }
+    }
+    
+    // 初始化游戏第一关
+    function initGame() {
+        currentBigLevel = 1;
+        passedLevelsCount = 0;
+        currentSubIndex = 0;
+        levelNumSpan.innerText = "1";
+        updateProgressUI();
+        loadLevel(1);
+    }
+    
+    // 绑定按钮事件
+    submitBtn.addEventListener('click', () => {
+        handleSubmitAnswer();
+    });
+    
+    nextBtn.addEventListener('click', () => {
+        moveToNextQuestion();
+    });
+    
+    // 开始游戏
+    initGame();
+</script>
+</body>
+</html>
